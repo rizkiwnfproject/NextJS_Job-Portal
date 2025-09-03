@@ -1,3 +1,5 @@
+"use client";
+
 import React, { FC } from "react";
 import { useRouter } from "next/navigation";
 
@@ -60,6 +62,7 @@ const Sidebar: FC<SidebarProps> = ({}) => {
               <Button
                 variant={"ghost"}
                 className="w-full justify-start font-medium text-slate-500 hover:text-blue-600"
+                onClick={sideJobListPage}
               >
                 <ClipboardList className="text-lg mr-1" />
                 Job Listings
