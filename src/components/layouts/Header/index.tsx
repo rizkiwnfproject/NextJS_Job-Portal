@@ -9,7 +9,7 @@ interface HeaderProps {}
 
 const Header: FC<HeaderProps> = ({}) => {
   const router = useRouter();
-  const navCreateJobPage = () => router.push('/post-a-job')
+  const navCreateJobPage = () => router.push("/dashboard/post-a-job");
   return (
     <>
       <div className="pb-3 mb-8 border-b flex flex-row items-center justify-between">
@@ -18,7 +18,7 @@ const Header: FC<HeaderProps> = ({}) => {
           <div className="font-semibold">Twitter</div>
         </div>
         <div className="">
-          <Button className="py-3 px-6 bg-violet-800 hover:bg-blue-800 transition-all duration-500 ease-in-out">
+          <Button className="py-3 px-6 bg-blue-600 hover:bg-blue-800 transition-all duration-500 ease-in-out" onClick={navCreateJobPage}>
             <PlusIcon />
             Post a Job
           </Button>

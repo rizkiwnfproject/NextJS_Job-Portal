@@ -1,4 +1,5 @@
 import React, { FC } from "react";
+import { useRouter } from "next/navigation";
 
 import { Button } from "@/components/ui/button";
 import {
@@ -11,16 +12,22 @@ import {
   Settings,
   UsersRound,
 } from "lucide-react";
+import Link from "next/link";
 
 interface SidebarProps {}
 
 const Sidebar: FC<SidebarProps> = ({}) => {
+  const router = useRouter();
+  const sideJobListPage = () => router.push("/dashboard/job-listings");
+
   return (
     <>
       <div className="pb-12 min-h-screen">
         <div className="space-y-4 py-4">
           <div className="px-3 py-2">
-            <h2 className="mb-7 px-4 text-lg font-semibold">Dashboard</h2>
+            <Link href={"/dashboard"}>
+              <h2 className="mb-7 px-4 text-lg font-semibold">Dashboard</h2>
+            </Link>
             <div className="space-y-3">
               <Button
                 variant={"ghost"}
