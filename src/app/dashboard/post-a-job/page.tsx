@@ -32,10 +32,18 @@ import InputSkills from "@/components/organisms/InputSkills";
 import CKeditor from "@/components/organisms/CKeditor";
 import InputBenefits from "@/components/organisms/InputBenefits";
 import { Button } from "@/components/ui/button";
+import useSWR from "swr";
+import { fetcher } from "@/lib/utils";
+import { CategoryJob } from "@prisma/client";
 
 interface PostAJobProps {}
 
 const PostAJobPage: FC<PostAJobProps> = ({}) => {
+  const { data, error, isLoading } = useSWR<CategoryJob>(
+    `/api/job/categories`,
+    fetcher
+  );
+
   const [editorLoaded, setEditorLoaded] = useState<boolean>(false);
 
   const form = useForm<z.infer<typeof jobFormSchema>>({
@@ -195,9 +203,11 @@ const PostAJobPage: FC<PostAJobProps> = ({}) => {
                         </SelectTrigger>
                       </FormControl>
                       <SelectContent>
-                        <SelectItem value="m@example.com">
-                          m@example.com
-                        </SelectItem>
+                        {data?.map((item: any) => (
+                          <SelectItem key={item.id} value={item.id}>
+                            {item.name}
+                          </SelectItem>
+                        ))}
                       </SelectContent>
                     </Select>
                     <FormMessage />
@@ -209,7 +219,11 @@ const PostAJobPage: FC<PostAJobProps> = ({}) => {
               title="Required Skills"
               subtitle="Add required skills for the job"
             >
-              <InputSkills label="Add Skills" name="requiredSkills" form={form} />
+              <InputSkills
+                label="Add Skills"
+                name="requiredSkills"
+                form={form}
+              />
             </FieldInput>
             <FieldInput
               title="Job Descriptions"
