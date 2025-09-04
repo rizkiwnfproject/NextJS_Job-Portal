@@ -28,7 +28,7 @@ async function getDetailJob(id: string) {
           User: true,
         },
       },
-      Category: true,
+      CategoryJob: true,
     },
   });
   return job;
@@ -37,7 +37,6 @@ async function getDetailJob(id: string) {
 const JobDetailPage: FC<JobDetailProps> = async ({ params }) => {
   const session = await getServerSession(authOptions);
   const job = await getDetailJob(params.id);
-  console.log(job);
 
   return (
     <>
@@ -50,7 +49,7 @@ const JobDetailPage: FC<JobDetailProps> = async ({ params }) => {
         <div>
           <div className="text-2xl font-semibold mb-1">{job?.roles}</div>
           <div>
-            {job?.Category?.name} . {job?.jobType} . {job?.applicants}
+            {job?.CategoryJob?.name} . {job?.jobType} . {job?.applicants}
             <span className="text-gray-500">/{job?.needs} Hired</span>
           </div>
         </div>
@@ -64,7 +63,7 @@ const JobDetailPage: FC<JobDetailProps> = async ({ params }) => {
           <Applicants applicants={job?.Applicant} />
         </TabsContent>
         <TabsContent value="jobDetails">
-          <JobDetail />
+          <JobDetail detail={job}/>
         </TabsContent>
       </Tabs>
     </>

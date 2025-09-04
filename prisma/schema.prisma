@@ -84,7 +84,7 @@ model Job {
     companyId      String?
     Company        Company?     @relation(fields: [companyId], references: [id])
     categoryId     String?
-    Category       CategoryJob? @relation(fields: [categoryId], references: [id])
+    CategoryJob    CategoryJob? @relation(fields: [categoryId], references: [id])
     Applicant      Applicant[]
 }
 

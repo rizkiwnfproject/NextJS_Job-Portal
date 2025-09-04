@@ -36,8 +36,6 @@ async function getDataJobs() {
 const JobListingsPage: FC<JobListingsProps> = async ({}) => {
   const jobs = await getDataJobs();
 
-  console.log(jobs);
-
   return (
     <>
       <div className="">

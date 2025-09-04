@@ -7,10 +7,9 @@ import {
   TableHeader,
   TableRow,
 } from "@/components/ui/table";
-import { JOB_APPLICANTS_COLUMNS, JOB_APPLICANTS_DATA } from "@/constants";
+import { JOB_APPLICANTS_COLUMNS } from "@/constants";
 import React, { FC } from "react";
 import ButtonActionTable from "../ButtonActionTable";
-import { Applicant } from "@prisma/client";
 
 interface ApplicantsProps {
   applicants: any;
@@ -35,7 +34,7 @@ const Applicants: FC<ApplicantsProps> = ({ applicants }) => {
                 <>
                   {applicants.map((item: any, i: number) => (
                     <TableRow key={item.id + i}>
-                      <TableCell>{item.name}</TableCell>
+                      <TableCell>{item.user.name}</TableCell>
                       <TableCell>
                         <ButtonActionTable url={`/dashboard/job-detail/${1}`} />
                       </TableCell>
