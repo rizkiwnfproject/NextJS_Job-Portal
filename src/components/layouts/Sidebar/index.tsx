@@ -15,6 +15,7 @@ import {
   UsersRound,
 } from "lucide-react";
 import Link from "next/link";
+import { signOut } from "next-auth/react";
 
 interface SidebarProps {}
 
@@ -91,6 +92,7 @@ const Sidebar: FC<SidebarProps> = ({}) => {
               <Button
                 variant={"ghost"}
                 className="w-full justify-start font-medium text-red-500 hover:text-slate-100 hover:bg-red-500"
+                onClick={() => signOut()}
               >
                 <LogOut className="text-lg mr-1" />
                 Logout
