@@ -13,19 +13,34 @@ import { Input } from "@/components/ui/input";
 import { signUpFormSchema } from "@/lib/form-schema";
 import { zodResolver } from "@hookform/resolvers/zod";
 import Link from "next/link";
+import { useRouter } from "next/navigation";
 import React, { FC } from "react";
 import { useForm } from "react-hook-form";
 import z from "zod";
+import { toast } from "sonner"
 
 interface SignUpProps {}
 
 const SignUpPage: FC<SignUpProps> = () => {
+  const router = useRouter();
+
   const form = useForm<z.infer<typeof signUpFormSchema>>({
     resolver: zodResolver(signUpFormSchema),
   });
 
-  const onSubmit = (val: z.infer<typeof signUpFormSchema>) => {
-    console.log(val);
+  const onSubmit = async (val: z.infer<typeof signUpFormSchema>) => {
+    try {
+      await fetch("/api/company/new-user", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(val),
+      });
+
+      await router.push("/auth/sign-in");
+    } catch (error) {
+      toast('Error, Please try again')
+      console.log(error);
+    }
   };
   return (
     <>
@@ -91,8 +106,8 @@ const SignUpPage: FC<SignUpProps> = () => {
                   )}
                 />
                 <Button className="w-full">Sign Up</Button>
-                <div className="text-sm text-center" >
-                 Already have an account?{" "}
+                <div className="text-sm text-center">
+                  Already have an account?{" "}
                   <Link
                     href={"/auth/sign-in"}
                     className="text-blue-600 font-medium"
