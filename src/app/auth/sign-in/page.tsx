@@ -16,16 +16,31 @@ import Link from "next/link";
 import React, { FC } from "react";
 import { useForm } from "react-hook-form";
 import z from "zod";
+import { signIn } from "next-auth/react";
+import { toast } from "sonner";
+import { useRouter } from "next/navigation";
 
 interface SignInProps {}
 
 const SignInPage: FC<SignInProps> = () => {
+  const router = useRouter();
+
   const form = useForm<z.infer<typeof signInFormSchema>>({
     resolver: zodResolver(signInFormSchema),
   });
 
-  const onSubmit = (val: z.infer<typeof signInFormSchema>) => {
-    console.log(val);
+  const onSubmit = async (val: z.infer<typeof signInFormSchema>) => {
+    const authenticated = await signIn("credentials", {
+      ...val,
+      redirect: false,
+    });
+    if (authenticated?.error) {
+      toast("Login failed", {
+        description: "Email or password maybe wrong",
+      });
+      return;
+    }
+    await router.push("/dashboard");
   };
   return (
     <>
@@ -63,7 +78,11 @@ const SignInPage: FC<SignInProps> = () => {
                     <FormItem>
                       <FormLabel>Password</FormLabel>
                       <FormControl>
-                        <Input type="password" placeholder="admin123" {...field} />
+                        <Input
+                          type="password"
+                          placeholder="admin123"
+                          {...field}
+                        />
                       </FormControl>
                       <FormMessage />
                     </FormItem>
@@ -71,8 +90,13 @@ const SignInPage: FC<SignInProps> = () => {
                 />
                 <Button className="w-full">Sign In</Button>
                 <div className="text-sm text-center">
-                  Don't have an account? {" "}
-                  <Link href={'/auth/sign-up'} className="text-blue-600 font-medium">Sign Up</Link>
+                  Don't have an account?{" "}
+                  <Link
+                    href={"/auth/sign-up"}
+                    className="text-blue-600 font-medium"
+                  >
+                    Sign Up
+                  </Link>
                 </div>
               </form>
             </Form>
