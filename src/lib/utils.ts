@@ -2,6 +2,7 @@ import { clsx, type ClassValue } from "clsx";
 import { twMerge } from "tailwind-merge";
 
 import bcrypt from "bcryptjs";
+import moment from "moment";
 
 export function cn(...inputs: ClassValue[]) {
   return twMerge(clsx(inputs));
@@ -28,3 +29,7 @@ export async function fetcher<JSON = any>(
   const res = await fetch(input, init);
   return res.json() as Promise<JSON>;
 }
+
+export const dateFormat = (date: any, format: string = "DD MMM yyyy") => {
+  return moment(date).format(format);
+};

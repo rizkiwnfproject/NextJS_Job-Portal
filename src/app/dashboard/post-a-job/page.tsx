@@ -35,16 +35,22 @@ import { Button } from "@/components/ui/button";
 import useSWR from "swr";
 import { fetcher } from "@/lib/utils";
 import { CategoryJob } from "@prisma/client";
+import { useSession } from "next-auth/react";
+import moment from "moment";
+import { useRouter } from "next/navigation";
+import { toast } from "sonner";
 
 interface PostAJobProps {}
 
 const PostAJobPage: FC<PostAJobProps> = ({}) => {
+  const { data: session } = useSession();
+  const [editorLoaded, setEditorLoaded] = useState<boolean>(false);
+  const router = useRouter();
+
   const { data, error, isLoading } = useSWR<CategoryJob>(
     `/api/job/categories`,
     fetcher
   );
-
-  const [editorLoaded, setEditorLoaded] = useState<boolean>(false);
 
   const form = useForm<z.infer<typeof jobFormSchema>>({
     resolver: zodResolver(jobFormSchema),
@@ -53,8 +59,40 @@ const PostAJobPage: FC<PostAJobProps> = ({}) => {
     },
   });
 
-  const onSubmit = (val: z.infer<typeof jobFormSchema>) => {
-    console.log(val);
+  const onSubmit = async (val: z.infer<typeof jobFormSchema>) => {
+    try {
+      const body: any = {
+        applicants: 0,
+        benefits: val.benefits,
+        categoryId: val.categoryId,
+        companyId: session?.user.id!!,
+        datePosted: moment().toDate(),
+        description: val.jobDescription,
+        dueDate: moment().add(1, "M").toDate(),
+        jobType: val.jobType,
+        needs: 20,
+        niceToHaves: val.niceToHave,
+        requiredSkills: val.requiredSkills,
+        responsibility: val.responsibility,
+        roles: val.roles,
+        salaryFrom: val.salaryFrom,
+        salaryTo: val.salaryTo,
+        whoYouAre: val.whoYouAre,
+      };
+
+      await fetch("/api/job", {
+        method: "POST",
+        headers: { "Content-Type": "Application/json" },
+        body: JSON.stringify(body),
+      });
+
+      await router.push("/dashboard/job-listings");
+    } catch (error) {
+      console.log(error);
+      toast("Error", {
+        description: "Please try again",
+      });
+    }
   };
 
   useEffect(() => {
