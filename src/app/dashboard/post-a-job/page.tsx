@@ -209,7 +209,7 @@ const PostAJobPage: FC<PostAJobProps> = ({}) => {
               title="Required Skills"
               subtitle="Add required skills for the job"
             >
-              <InputSkills form={form} />
+              <InputSkills label="Add Skills" name="requiredSkills" form={form} />
             </FieldInput>
             <FieldInput
               title="Job Descriptions"

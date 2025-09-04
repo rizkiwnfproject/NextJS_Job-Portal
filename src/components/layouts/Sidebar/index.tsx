@@ -21,6 +21,7 @@ interface SidebarProps {}
 const Sidebar: FC<SidebarProps> = ({}) => {
   const router = useRouter();
   const sideJobListPage = () => router.push("/dashboard/job-listings");
+  const settingsPage = () => router.push("/dashboard/settings");
 
   return (
     <>
@@ -82,6 +83,7 @@ const Sidebar: FC<SidebarProps> = ({}) => {
               <Button
                 variant={"ghost"}
                 className="w-full justify-start font-medium text-slate-500 hover:text-blue-600"
+                onClick={settingsPage}
               >
                 <Settings className="text-lg mr-1" />
                 Settings
