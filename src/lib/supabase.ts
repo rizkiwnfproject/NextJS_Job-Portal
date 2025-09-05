@@ -22,7 +22,7 @@ export const supabaseUploadFile = async (
   file: File | string,
   bucket: "company" | "applicant"
 ) => {
-  const filename = `createId(6).jpg`;
+  const filename = `${createId(6)}.jpg`;
   const { data, error } = await supabaseClient.storage
     .from(bucket)
     .upload("public/" + filename, file, {
@@ -42,7 +42,7 @@ export const supabaseGetPublicUrl = async (
 ) => {
   const { data } = supabaseClient.storage
     .from(bucket)
-    .getPublicUrl("folder/" + filename);
+    .getPublicUrl("public/" + filename);
   return {
     publicUrl: data.publicUrl,
   };
@@ -54,7 +54,7 @@ export const supabaseDeleteFile = async (
 ) => {
   const { data, error } = await supabaseClient.storage
     .from(bucket)
-    .remove(["folder/" + filename]);
+    .remove(["public/" + filename]);
   return {
     data,
     error,

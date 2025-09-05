@@ -21,6 +21,7 @@ interface JobDetailProps {
 }
 
 const JobDetail: FC<JobDetailProps> = ({ detail }) => {
+  const benefits: any = detail?.benefits;
   return (
     <>
       <div>
@@ -62,7 +63,7 @@ const JobDetail: FC<JobDetailProps> = ({ detail }) => {
               <span className="text-gray-500">of {detail?.needs} capacity</span>
               <Progress
                 className="mt-3"
-                value={detail?.applicants / detail?.needs / 100}
+                value={(detail?.applicants || 0) / (detail?.needs || 0) / 100}
               />
             </div>
             <div className="mb-10 space-y-5">
@@ -124,12 +125,10 @@ const JobDetail: FC<JobDetailProps> = ({ detail }) => {
             </div>
           </div>
           <div className="grid grid-cols-4 gap-5 mt-9">
-            {detail?.benefits?.map((item: any) => (
+            {benefits?.map((item: any) => (
               <div key={item} className="">
                 <PartyPopper className="w-10 h-10 text-violet-600 mb-6" />
-                <div className="text-lg font-semibold mb-3">
-                  {item.benefit}
-                </div>
+                <div className="text-lg font-semibold mb-3">{item.benefit}</div>
                 <div className="text-gray-500">{item.description}</div>
               </div>
             ))}

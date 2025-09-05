@@ -41,9 +41,8 @@ export const jobFormSchema = z.object({
 });
 
 export const overviewFormSchema = z.object({
-  image: z
-    .any()
-    .refine((item: any) => item?.name, { message: "Image is required" }),
+  image: z.any(),
+  // .refine((item: any) => item?.name, { message: "Image is required" }),
   name: z.string({ message: "Name is required" }),
   website: z.string({ message: "Website is required" }),
   location: z.string({ message: "Location is required" }),

@@ -1,5 +1,6 @@
 "use client";
 
+import { supabaseGetPublicUrl, supabaseUploadFile } from "@/lib/supabase";
 import { ImageUp } from "lucide-react";
 import Image from "next/image";
 import React, { ChangeEvent, useEffect, useRef, useState } from "react";
@@ -11,27 +12,33 @@ interface CustomUploadProps {
 export default function CustomUpload({ form, name }: CustomUploadProps) {
   const [previewImg, setPreviewImg] = useState("");
   const inputRef = useRef<HTMLInputElement>(null);
+
   const handleFileChange = (e: ChangeEvent<HTMLInputElement>) => {
     if (e.target.files) {
       setPreviewImg(URL.createObjectURL(e.target.files[0]));
-      form.setValue(name, e.target.files[0]);
+      if (previewImg) {
+        form.setValue(name, e.target.files[0]);
+      }
     }
   };
   const handleUploadFile = () => {
     inputRef.current?.click();
   };
-  //   useEffect(() => {
-  //     async function getImage() {
-  //       const urlImg = await supabaseGetPublicUrl(
-  //         form.getValues(name),
-  //         "company"
-  //       );
-  //       setPreviewImg(urlImg);
-  //     }
-  //     if (form.getValues(name) !== "") {
-  //       getImage();
-  //     }
-  //   });
+  useEffect(() => {
+    async function getImage() {
+      const { publicUrl } = await supabaseGetPublicUrl(
+        form.getValues(name),
+        "company"
+      );
+      setPreviewImg(publicUrl);
+    }
+    if (form.getValues(name) !== "") {
+      getImage();
+    }
+  }, []);
+
+  console.log(previewImg);
+
   return (
     <>
       <div className="inline-flex items-center gap-8">
@@ -45,7 +52,7 @@ export default function CustomUpload({ form, name }: CustomUploadProps) {
           onClick={handleUploadFile}
         >
           <div className="text-center">
-            <ImageUp className="w-full flex justify-center mb-2"/>
+            <ImageUp className="w-full flex justify-center mb-2" />
             <span className="text-blue-600 font-medium">
               Click to replace
             </span>{" "}

@@ -31,7 +31,7 @@ import {
 import { Separator } from "@/components/ui/separator";
 import { EMPLOYEE_OPTIONS, LOCATION_OPTIONS, optionType } from "@/constants";
 import { overviewFormSchema } from "@/lib/form-schema";
-import { cn } from "@/lib/utils";
+import { cn, dateFormat, fetcher } from "@/lib/utils";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { CalendarIcon } from "lucide-react";
 import React, { FC, useEffect, useState } from "react";
@@ -39,17 +39,71 @@ import { useForm } from "react-hook-form";
 import z from "zod";
 import InputSkills from "@/components/organisms/InputSkills";
 import CKeditor from "@/components/organisms/CKeditor";
+import useSWR from "swr";
+import { CompanyOverview, Industry } from "@prisma/client";
+import { supabaseUpdateFile, supabaseUploadFile } from "@/lib/supabase";
+import { useSession } from "next-auth/react";
+import { toast } from "sonner";
+import { useRouter } from "next/navigation";
 
-interface OverviewFormProps {}
-const OverviewForm: FC<OverviewFormProps> = ({}) => {
+interface OverviewFormProps {
+  detail: CompanyOverview | undefined;
+}
+
+const OverviewForm: FC<OverviewFormProps> = ({ detail }) => {
+  const [editorLoaded, setEditorLoaded] = useState<boolean>(false);
+
+  const { data } = useSWR<Industry[]>("/api/company/industry", fetcher);
+  const { data: session } = useSession();
+  const router = useRouter();
+
   const form = useForm<z.infer<typeof overviewFormSchema>>({
     resolver: zodResolver(overviewFormSchema),
+    defaultValues: {
+      dateFounded: detail?.dateFounded
+        ? new Date(detail.dateFounded)
+        : undefined,
+      description: detail?.description,
+      employee: detail?.employee,
+      image: detail?.image,
+      industry: detail?.industry,
+      location: detail?.location,
+      name: detail?.name,
+      techStack: detail?.techStack,
+      website: detail?.website,
+    },
   });
-  const onSubmit = (val: z.infer<typeof overviewFormSchema>) => {
-    console.log(val);
+
+  const onSubmit = async (val: z.infer<typeof overviewFormSchema>) => {
+    try {
+      let filename = "";
+      if (typeof val.image === "object") {
+        const uploadImg = await supabaseUploadFile(val.image, "company");
+        filename = uploadImg.filename;
+      } else {
+        filename = val.image;
+      }
+
+      const body = {
+        ...val,
+        image: filename,
+        companyId: session?.user.id,
+      };
+
+      await fetch("/api/company/overview", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(body),
+      });
+
+      await toast("Success", { description: "Edit Profile", className: 'text-slate-700' });
+      router.refresh();
+    } catch (error) {
+      await toast("Error", { description: "Error Edit Profile, please try again" });
+      console.log(error);
+    }
   };
 
-  const [editorLoaded, setEditorLoaded] = useState<boolean>(false);
   useEffect(() => {
     setEditorLoaded(true);
   }, []);
@@ -186,13 +240,11 @@ const OverviewForm: FC<OverviewFormProps> = ({}) => {
                             </SelectTrigger>
                           </FormControl>
                           <SelectContent>
-                            {LOCATION_OPTIONS.map(
-                              (item: optionType, i: number) => (
-                                <SelectItem key={item.id + i} value={item.id}>
-                                  {item.label}
-                                </SelectItem>
-                              )
-                            )}
+                            {data?.map((item: Industry) => (
+                              <SelectItem key={item.id} value={item.id}>
+                                {item.name}
+                              </SelectItem>
+                            ))}
                           </SelectContent>
                         </Select>
                         <FormMessage />
