@@ -26,16 +26,44 @@ import {
   FormMessage,
 } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
+import { useSession } from "next-auth/react";
+import { useRouter } from "next/navigation";
+import { toast } from "sonner";
 
 interface DialogAddFormProps {}
 
 const DialogAddForm: FC<DialogAddFormProps> = () => {
+  const { data: session } = useSession();
+  const router = useRouter();
+
   const form = useForm<z.infer<typeof teamFormSchema>>({
     resolver: zodResolver(teamFormSchema),
   });
 
-  const onSubmit = (val: z.infer<typeof teamFormSchema>) => {
-    console.log(val);
+  const onSubmit = async (val: z.infer<typeof teamFormSchema>) => {
+    try {
+      const body = {
+        ...val,
+        companyId: session?.user.id,
+      };
+
+      await fetch("/api/company/teams", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(body),
+      });
+      toast("Success", {
+        description: "Add / Edit Teams",
+        className: "text-slate-700",
+      });
+      router.refresh();
+    } catch (error) {
+      toast("Error", {
+        description: "Error Add / Edit Teams, please try again",
+        className: "text-slate-700",
+      });
+      console.log(error);
+    }
   };
   return (
     <>
