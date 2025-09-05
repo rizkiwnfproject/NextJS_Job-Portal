@@ -12,21 +12,60 @@ import {
   FormMessage,
 } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
-import { Separator } from "@/components/ui/separator";
 import { socialMediaFormSchema } from "@/lib/form-schema";
 import { zodResolver } from "@hookform/resolvers/zod";
+import { CompanySocialMedia } from "@prisma/client";
+import { useSession } from "next-auth/react";
+import { useRouter } from "next/navigation";
 import React, { FC } from "react";
 import { useForm } from "react-hook-form";
+import { toast } from "sonner";
 import z from "zod";
 
-interface SocialMediaFormProps {}
+interface SocialMediaFormProps {
+  detail: CompanySocialMedia | undefined;
+}
 
-const SocialMediaForm: FC<SocialMediaFormProps> = () => {
+const SocialMediaForm: FC<SocialMediaFormProps> = ({ detail }) => {
+  const { data: session } = useSession();
+  const router = useRouter();
+
   const form = useForm<z.infer<typeof socialMediaFormSchema>>({
     resolver: zodResolver(socialMediaFormSchema),
+    defaultValues: {
+      facebook: detail?.facebook,
+      youtube: detail?.youtube,
+      twitter: detail?.twitter,
+      linkedin: detail?.linkedin,
+      instagram: detail?.instagram,
+    },
   });
-  const onSubmit = (val: z.infer<typeof socialMediaFormSchema>) => {
-    console.log(val);
+
+  const onSubmit = async (val: z.infer<typeof socialMediaFormSchema>) => {
+    try {
+      const body = {
+        ...val,
+        companyId: session?.user.id,
+      };
+
+      await fetch("/api/company/social-media", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(body),
+      });
+
+      toast("Success", {
+        description: "Edit Social Media",
+        className: "text-slate-700",
+      });
+      router.refresh();
+    } catch (error) {
+      toast("Error", {
+        description: "Error Edit Social Media, please try again",
+        className: "text-slate-700",
+      });
+      console.log(error);
+    }
   };
   return (
     <>
