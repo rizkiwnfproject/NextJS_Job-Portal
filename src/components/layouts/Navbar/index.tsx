@@ -26,9 +26,11 @@ const Navbar: FC<NavbarProps> = () => {
                 Find Jobs
               </span>
             </Link>
-            <span className="font-medium text-gray-400 mr-4 cursor-pointer">
-              Browse Companies
-            </span>
+            <Link href={"/find-companies"}>
+              <span className="font-medium text-gray-400 mr-4 cursor-pointer">
+                Browse Companies
+              </span>
+            </Link>
           </div>
         </div>
         <div className="inline-flex items-center gap-4 h-8">
