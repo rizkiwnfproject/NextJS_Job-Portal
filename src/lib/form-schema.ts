@@ -90,3 +90,7 @@ export const heroSearch = z.object({
   title: z.string().nullable(),
   location: z.string().nullable(),
 });
+
+export const formFilterSchema = z.object({
+  categories: z.array(z.string()),
+});

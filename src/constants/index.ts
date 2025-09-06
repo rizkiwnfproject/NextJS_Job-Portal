@@ -1,9 +1,5 @@
+import { OptionType } from "@/types";
 import { EnumValues } from "zod/v3";
-
-export type optionType = {
-  id: string;
-  label: string;
-};
 
 export const JOBTYPES: EnumValues = [
   "Full-Time",
@@ -43,7 +39,7 @@ export const JOB_LISTING_DATA = [
   },
 ];
 
-export const LOCATION_OPTIONS: optionType[] = [
+export const LOCATION_OPTIONS: OptionType[] = [
   {
     id: "Indonesia",
     label: "Indonesia",
@@ -62,7 +58,7 @@ export const LOCATION_OPTIONS: optionType[] = [
   },
 ];
 
-export const EMPLOYEE_OPTIONS: optionType[] = [
+export const EMPLOYEE_OPTIONS: OptionType[] = [
   {
     id: "1-50",
     label: "1-50",
@@ -86,5 +82,32 @@ export const EMPLOYEE_OPTIONS: optionType[] = [
   {
     id: "1000-above",
     label: "1000-above",
+  },
+];
+
+export const CATEGORIES_OPTIONS = [
+  {
+    id: "recents",
+    label: "Recents",
+  },
+  {
+    id: "home",
+    label: "Home",
+  },
+  {
+    id: "applications",
+    label: "Applications",
+  },
+  {
+    id: "desktop",
+    label: "Desktop",
+  },
+  {
+    id: "downloads",
+    label: "Downloads",
+  },
+  {
+    id: "documents",
+    label: "Documents",
   },
 ];
