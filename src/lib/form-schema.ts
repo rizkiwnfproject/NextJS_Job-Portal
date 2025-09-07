@@ -86,6 +86,8 @@ export const signUpFormSchema = z.object({
   password: z.string({ message: "Password is required" }),
 });
 
+// landing page
+
 export const heroSearch = z.object({
   title: z.string().nullable(),
   location: z.string().nullable(),
