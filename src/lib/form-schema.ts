@@ -98,3 +98,20 @@ export const formFilterSchema = z.object({
 export const formFilterCompanySchema = z.object({
   industry: z.array(z.string()),
 });
+
+export const formApplySchema = z.object({
+  resume: z.any().refine((file: any) => file?.name, "Please Upload Resume"),
+  fullname: z
+    .string({ message: "Fullname is required" })
+    .min(5, { message: "Fullname minimal is 5 characters" }),
+  email: z
+    .string({ message: "Email is required" })
+    .email({ message: "Email not valid" }),
+  phone: z
+    .string({ message: "Phone number is required" })
+    .min(6, { message: "Phone number minimal is 6 characters" }),
+  previousJobTitle: z.string({ message: "Previous Job is required" }),
+  linkedin: z.string({ message: "LinkedIn is required" }),
+  portofolio: z.string({ message: "Portofolio is required" }),
+  coverLetter: z.string({ message: "Cover Letter is required" }),
+});
