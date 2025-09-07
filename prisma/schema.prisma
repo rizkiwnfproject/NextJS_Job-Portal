@@ -28,6 +28,7 @@ model Company {
     name               String
     password           String
     email              String               @unique
+    role               Role                 @default(ADMIN)
     CompanySocialMedia CompanySocialMedia[]
     CompanyTeam        CompanyTeam[]
     CompanyOverview    CompanyOverview[]
@@ -98,6 +99,7 @@ model User {
     name      String
     password  String
     email     String      @unique
+    role      Role        @default(USER)
     Applicant Applicant[]
 }
 

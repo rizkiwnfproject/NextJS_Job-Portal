@@ -20,7 +20,7 @@ export default async function RootLayout({
   children: React.ReactNode;
 }>) {
   const session = await getServerSession(authOptions);
-  if (session !== null) {
+  if (session !== null && session.user.role === "ADMIN") {
     return redirect("/dashboard");
   }
 

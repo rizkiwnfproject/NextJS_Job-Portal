@@ -7,7 +7,8 @@ export const authOptions: NextAuthOptions = {
   secret: process.env.NEXTAUTH_SECRET,
   providers: [
     CredentialsProvider({
-      name: "Credentials",
+      id: "company-login",
+      name: "company",
       credentials: {
         email: {
           label: "email",
@@ -38,7 +39,41 @@ export const authOptions: NextAuthOptions = {
         return null;
       },
     }),
+    CredentialsProvider({
+      id: "user-login",
+      name: "user",
+      credentials: {
+        email: {
+          label: "email",
+          type: "email",
+        },
+        password: {
+          label: "password",
+          type: "password",
+        },
+      },
+      async authorize(credentials, req) {
+        const user = await prisma.user.findFirst({
+          where: {
+            email: credentials?.email,
+          },
+        });
+        if (!user) {
+          return null;
+        }
+        const isMatch = await comparePassword(
+          credentials?.password!!,
+          user.password
+        );
+
+        if (isMatch) {
+          return user;
+        }
+        return null;
+      },
+    }),
   ],
+
   pages: {
     signIn: "/auth/sign-in",
     newUser: "/auth/sign-up",
@@ -47,11 +82,17 @@ export const authOptions: NextAuthOptions = {
     jwt({ token, account, user }) {
       if (account) {
         token.id = user.id;
+        token.email = user.email;
+        token.role = user.role;
       }
       return token;
     },
     async session({ session, token, user }) {
-      session.user.id = token.id;
+      if (session.user) {
+        session.user.id = token.id;
+        session.user.email = token.email;
+        session.user.role = token.role;
+      }
       return session;
     },
   },

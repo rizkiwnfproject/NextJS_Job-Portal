@@ -30,7 +30,7 @@ const SignInPage: FC<SignInProps> = () => {
   });
 
   const onSubmit = async (val: z.infer<typeof signInFormSchema>) => {
-    const authenticated = await signIn("credentials", {
+    const authenticated = await signIn("company-login", {
       ...val,
       redirect: false,
     });
@@ -40,7 +40,7 @@ const SignInPage: FC<SignInProps> = () => {
       });
       return;
     }
-    await router.push("/dashboard");
+    router.push("/dashboard");
   };
   return (
     <>

@@ -26,6 +26,8 @@ export default async function RootLayout({
 
   if (session === null) {
     return redirect("/auth/sign-in");
+  } else if (session !== null && session.user.role !== "ADMIN") {
+    return redirect("/");
   }
 
   return (

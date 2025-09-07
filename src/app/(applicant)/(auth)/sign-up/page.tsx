@@ -10,9 +10,8 @@ import {
   FormMessage,
 } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
-import { signInFormSchema } from "@/lib/form-schema";
+import { signUpFormSchema } from "@/lib/form-schema";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { signIn } from "next-auth/react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import React, { FC } from "react";
@@ -20,33 +19,31 @@ import { useForm } from "react-hook-form";
 import { toast } from "sonner";
 import z from "zod";
 
-interface SignInProps {}
+interface SignUpProps {}
 
-const SignInPage: FC<SignInProps> = () => {
+const SignUpPage: FC<SignUpProps> = () => {
   const router = useRouter();
 
-  const form = useForm<z.infer<typeof signInFormSchema>>({
-    resolver: zodResolver(signInFormSchema),
+  const form = useForm<z.infer<typeof signUpFormSchema>>({
+    resolver: zodResolver(signUpFormSchema),
   });
 
-  const onSubmit = async (val: z.infer<typeof signInFormSchema>) => {
+  const onSubmit = async (val: z.infer<typeof signUpFormSchema>) => {
     try {
-      const authenticated = await signIn("user-login", {
-        ...val,
-        redirect: false,
+      await fetch("/api/user/sign-up", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(val),
       });
-      if (authenticated?.error) {
-        toast("Login failed", {
-          description: "Email or password maybe wrong",
-        });
-        return;
-      }
       toast("Success", {
-        description: "Success Login",
+        description: "Create account success",
       });
-      router.push("/");
+      router.push("/sign-in");
     } catch (error) {
       console.log(error);
+      toast("Error", {
+        description: "Email or password is wrong",
+      });
     }
   };
 
@@ -54,10 +51,23 @@ const SignInPage: FC<SignInProps> = () => {
     <>
       <div>
         <div className="text-3xl text-center font-semibold mb-7">
-          Welcome Back, Dude
+          Get more opportunities
         </div>
         <Form {...form}>
           <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-5">
+            <FormField
+              control={form.control}
+              name="name"
+              render={({ field }) => (
+                <FormItem>
+                  <FormLabel>Full name</FormLabel>
+                  <FormControl>
+                    <Input placeholder="Enter your full name" {...field} />
+                  </FormControl>
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
             <FormField
               control={form.control}
               name="email"
@@ -89,13 +99,20 @@ const SignInPage: FC<SignInProps> = () => {
               )}
             />
             <Button type="submit" className="w-full">
-              Sign In
+              Sign Up
             </Button>
             <div className="text-gray-500 text-sm">
-              Don’t have an account?{" "}
-              <Link href={"/sign-up"} className="text-primary font-medium">
-                Sign Up
+              Already have an account?{" "}
+              <Link href={"/sign-in"} className="text-primary font-medium">
+                Sign In
               </Link>
+            </div>
+            <div className="text-sm text-gray-500">
+              By clicking `Continue`, you acknowledge that you have read and
+              accept the{" "}
+              <span className="text-primary font-medium">Terms of Service</span>{" "}
+              and{" "}
+              <span className="text-primary font-medium">Privacy Policy.</span>
             </div>
           </form>
         </Form>
@@ -104,4 +121,4 @@ const SignInPage: FC<SignInProps> = () => {
   );
 };
 
-export default SignInPage;
+export default SignUpPage;

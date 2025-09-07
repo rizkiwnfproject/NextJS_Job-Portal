@@ -2,6 +2,10 @@ import type { Metadata } from "next";
 import { Epilogue } from "next/font/google";
 import "../../globals.css";
 import Image from "next/image";
+import { Toaster } from "@/components/ui/sonner";
+import { getServerSession } from "next-auth";
+import { authOptions } from "@/app/api/auth/[...nextauth]/route";
+import { redirect } from "next/navigation";
 
 const epilogue = Epilogue({
   subsets: ["latin"],
@@ -11,11 +15,16 @@ export const metadata: Metadata = {
   title: "Website Job Portal",
 };
 
-export default function AuthRootLayout({
+export default async function AuthRootLayout({
   children,
 }: Readonly<{
   children: React.ReactNode;
 }>) {
+  const session = await getServerSession(authOptions);
+  if (session !== null && session.user.role === "USER") {
+    return redirect("/");
+  }
+
   return (
     <html lang="en">
       <body className={`${epilogue.className} antialiased`}>
@@ -27,7 +36,7 @@ export default function AuthRootLayout({
                 alt="/images/bg-auth.png"
                 fill
                 objectFit="cover"
-                objectPosition="top"
+                objectPosition="middle"
               />
             </div>
           </div>
@@ -37,6 +46,7 @@ export default function AuthRootLayout({
             </div>
           </div>
         </main>
+        <Toaster />
       </body>
     </html>
   );

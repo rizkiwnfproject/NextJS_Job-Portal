@@ -23,16 +23,18 @@ export const supabaseUploadFile = async (
   bucket: "company" | "applicant"
 ) => {
   const filename = `${createId(6)}.jpg`;
+  const resumeName = `resume-${createId(6)}.pdf`;
+  
   const { data, error } = await supabaseClient.storage
     .from(bucket)
-    .upload("public/" + filename, file, {
+    .upload("public/" + (bucket === "company" ? filename : resumeName), file, {
       cacheControl: "3600",
       upsert: false,
     });
   return {
     data,
     error,
-    filename,
+    fileName: bucket === "company" ? filename : resumeName,
   };
 };
 

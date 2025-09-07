@@ -1,6 +1,6 @@
 import type { Metadata } from "next";
 import { Epilogue } from "next/font/google";
-import "../../globals.css";
+import "../../../globals.css";
 import Image from "next/image";
 import Navbar from "@/components/layouts/Navbar";
 import Footer from "@/components/layouts/Footer";
@@ -22,14 +22,14 @@ export default async function RootLayout({
 }: Readonly<{
   children: React.ReactNode;
 }>) {
+  const session = await getServerSession(authOptions);
+  if (session === null || session.user.role !== "USER") {
+    return redirect("/");
+  }
   return (
     <html lang="en">
       <body className={`${epilogue.className} antialiased`}>
-        <NextAuthProvider>
-          <Navbar />
-          <main>{children}</main>
-          <Footer />
-        </NextAuthProvider>
+        <main>{children}</main>
       </body>
     </html>
   );
