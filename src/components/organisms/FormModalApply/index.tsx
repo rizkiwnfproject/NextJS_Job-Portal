@@ -10,7 +10,6 @@ import Image from "next/image";
 import { Dialog, DialogContent, DialogTrigger } from "@/components/ui/dialog";
 import {
   FormControl,
-  FormDescription,
   FormField,
   FormItem,
   FormLabel,
@@ -22,10 +21,24 @@ import { Separator } from "@/components/ui/separator";
 import { Form } from "@/components/ui/form";
 import { Textarea } from "@/components/ui/textarea";
 import UploadField from "../UploadField";
+import { useSession } from "next-auth/react";
+import { Dot } from "lucide-react";
 
-interface FormModalApplyProps {}
+interface FormModalApplyProps {
+  image: string;
+  roles: string;
+  location: string;
+  jobType: string;
+  company: string;
+}
 
-const FormModalApply: FC<FormModalApplyProps> = () => {
+const FormModalApply: FC<FormModalApplyProps> = ({
+  image,
+  jobType,
+  location,
+  roles,
+  company,
+}) => {
   const form = useForm<z.infer<typeof formApplySchema>>({
     resolver: zodResolver(formApplySchema),
   });
@@ -34,31 +47,32 @@ const FormModalApply: FC<FormModalApplyProps> = () => {
     console.log(val);
   };
 
+  const { data: session } = useSession();
+
   return (
     <>
       <Dialog>
         <DialogTrigger asChild>
-          <Button size={"lg"} className="text-lg px-12 py-6">
-            Apply
-          </Button>
+          {session && session.user.role === "USER" ? (
+            <Button size={"lg"} className="text-lg px-12 py-6">
+              Apply
+            </Button>
+          ) : (
+            <Button size={"lg"} disabled className="text-lg px-12 py-6">
+              Sign-in First
+            </Button>
+          )}
         </DialogTrigger>
         <DialogContent className="sm:max-w-[600px]">
           <div>
             <div className="inline-flex items-center gap-4">
               <div>
-                <Image
-                  src={"/images/company2.png"}
-                  alt="/images/company2.png"
-                  width={60}
-                  height={60}
-                />
+                <Image src={image} alt={image} width={60} height={60} />
               </div>
               <div>
-                <div className="text-lg font-semibold">
-                  Social Media Assistant
-                </div>
-                <div className="text-gray-500">
-                  Agency . Paris, France . Full-Time
+                <div className="text-lg font-semibold">{roles}</div>
+                <div className="text-gray-500 inline-flex gap-1">
+                  {company} <Dot/> {location} <Dot/> {jobType}
                 </div>
               </div>
             </div>
