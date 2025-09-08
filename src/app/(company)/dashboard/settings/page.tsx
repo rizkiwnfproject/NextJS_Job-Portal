@@ -13,8 +13,6 @@ interface SettingsProps {}
 async function getDetailCompany() {
   const session = await getServerSession(authOptions);
 
-  console.log(session);
-
   const company = await prisma.company.findFirst({
     where: { id: session?.user.id },
     include: {

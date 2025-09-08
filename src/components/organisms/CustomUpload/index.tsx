@@ -37,8 +37,6 @@ export default function CustomUpload({ form, name }: CustomUploadProps) {
     }
   }, []);
 
-  console.log(previewImg);
-
   return (
     <>
       <div className="inline-flex items-center gap-8">
