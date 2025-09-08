@@ -23,6 +23,9 @@ import { Textarea } from "@/components/ui/textarea";
 import UploadField from "../UploadField";
 import { useSession } from "next-auth/react";
 import { Dot } from "lucide-react";
+import { supabaseUploadFile } from "@/lib/supabase";
+import { toast } from "sonner";
+import { useRouter } from "next/navigation";
 
 interface FormModalApplyProps {
   image: string;
@@ -30,6 +33,8 @@ interface FormModalApplyProps {
   location: string;
   jobType: string;
   company: string;
+  id: string;
+  isApply: boolean;
 }
 
 const FormModalApply: FC<FormModalApplyProps> = ({
@@ -38,30 +43,63 @@ const FormModalApply: FC<FormModalApplyProps> = ({
   location,
   roles,
   company,
+  id,
+  isApply,
 }) => {
   const form = useForm<z.infer<typeof formApplySchema>>({
     resolver: zodResolver(formApplySchema),
   });
-
-  const onSubmit = (val: z.infer<typeof formApplySchema>) => {
-    console.log(val);
-  };
-
+  const router = useRouter();
   const { data: session } = useSession();
+
+  const onSubmit = async (val: z.infer<typeof formApplySchema>) => {
+    try {
+      const { fileName, error } = await supabaseUploadFile(
+        val.resume,
+        "applicant"
+      );
+
+      const reqData = {
+        userId: session?.user.id,
+        jobId: id,
+        resume: fileName,
+        coverLetter: val.coverLetter,
+        linkedin: val.linkedin,
+        portofolio: val.portofolio,
+        previousJobTitle: val.previousJobTitle,
+        phone: val.phone,
+      };
+
+      if (error) {
+        throw "error";
+      }
+
+      await fetch("/api/job/apply", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(reqData),
+      });
+
+      toast("Success", {
+        description: "Success Apply Job",
+      });
+
+      router.replace("/");
+    } catch (error) {
+      console.log(error);
+      toast("Failed", {
+        description: "Failed Apply Job",
+      });
+    }
+  };
 
   return (
     <>
       <Dialog>
         <DialogTrigger asChild>
-          {session && session.user.role === "USER" ? (
-            <Button size={"lg"} className="text-lg px-12 py-6">
-              Apply
-            </Button>
-          ) : (
-            <Button size={"lg"} disabled className="text-lg px-12 py-6">
-              Sign-in First
-            </Button>
-          )}
+          <Button size={"lg"} className="text-lg px-12 py-6">
+            Apply
+          </Button>
         </DialogTrigger>
         <DialogContent className="sm:max-w-[600px]">
           <div>
@@ -72,7 +110,7 @@ const FormModalApply: FC<FormModalApplyProps> = ({
               <div>
                 <div className="text-lg font-semibold">{roles}</div>
                 <div className="text-gray-500 inline-flex gap-1">
-                  {company} <Dot/> {location} <Dot/> {jobType}
+                  {company} <Dot /> {location} <Dot /> {jobType}
                 </div>
               </div>
             </div>
@@ -209,7 +247,9 @@ const FormModalApply: FC<FormModalApplyProps> = ({
                 />
 
                 <UploadField form={form} />
-                <Button className="w-full">Apply</Button>
+                <Button type="submit" className="w-full">
+                  Apply
+                </Button>
               </form>
             </Form>
           </div>

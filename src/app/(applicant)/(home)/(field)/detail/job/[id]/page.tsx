@@ -1,17 +1,21 @@
 import FormModalApply from "@/components/organisms/FormModalApply";
 import { Badge } from "@/components/ui/badge";
-import { Button } from "@/components/ui/button";
 import { Progress } from "@/components/ui/progress";
 import { Separator } from "@/components/ui/separator";
 import { LayoutGrid } from "lucide-react";
 import Image from "next/image";
 import Link from "next/link";
-import React, { FC } from "react";
+import React from "react";
 import prisma from "../../../../../../../../lib/prisma";
 import { dateFormat } from "@/lib/utils";
 import { supabaseGetPublicUrl } from "@/lib/supabase";
+import { getServerSession } from "next-auth";
+import { authOptions } from "@/app/api/auth/[...nextauth]/route";
+import { Button } from "@/components/ui/button";
 
 async function getDetailJob(id: string) {
+  const session = await getServerSession(authOptions);
+
   const data = await prisma.job.findFirst({
     where: {
       id: id,
@@ -37,11 +41,25 @@ async function getDetailJob(id: string) {
     imageUrl = "/images/company2.png";
   }
 
-  return { ...data, image: imageUrl };
+  // const isApply = await prisma.applicant.count({
+  const isApply = await prisma.applicant.findFirst({
+    where: {
+      userId: session?.user.id,
+      jobId: id,
+    },
+  });
+
+  if (!session) {
+    return { ...data, image: imageUrl, isApply: false };
+  }
+
+  return { ...data, image: imageUrl, isApply: !!isApply };
 }
 
 const DetailJobPage = async ({ params }: { params: { id: string } }) => {
-  const data = await getDetailJob(params.id);
+  const { id } = await params;
+  const data = await getDetailJob(id);
+  const session = await getServerSession(authOptions);
 
   return (
     <>
@@ -80,13 +98,31 @@ const DetailJobPage = async ({ params }: { params: { id: string } }) => {
               </div>
             </div>
           </div>
-          <FormModalApply
-            image={data.image}
-            jobType={data.jobType!}
-            location={data?.Company?.CompanyOverview[0].location!}
-            roles={data.roles!}
-            company={data?.CategoryJob?.name!}
-          />
+          {session && session.user.role === "USER" ? (
+            <>
+              {data.isApply ? (
+                <Button size={"lg"} disabled className="text-lg px-12 py-6">
+                  Applied
+                </Button>
+              ) : (
+                <FormModalApply
+                  image={data.image}
+                  jobType={data.jobType!}
+                  location={data?.Company?.CompanyOverview[0].location!}
+                  roles={data.roles!}
+                  company={data?.CategoryJob?.name!}
+                  id={data.id!}
+                  isApply={data.isApply}
+                />
+              )}
+            </>
+          ) : (
+            <>
+              <Button size={"lg"} disabled className="text-lg px-12 py-6">
+                Sign-in First
+              </Button>
+            </>
+          )}
         </div>
       </div>
       <div className="px-32 py-16 flex flex-row items-start gap-10">

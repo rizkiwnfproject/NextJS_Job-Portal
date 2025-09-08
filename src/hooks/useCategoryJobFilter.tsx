@@ -21,8 +21,6 @@ const useCategoryJobFilter = () => {
     ] as filterFormType[];
   }, [categories]);
 
-  console.log(filters);
-
   return {
     filters,
   };

@@ -8,6 +8,7 @@ import NextAuthProvider from "@/context/NextAuthProvider";
 import { getServerSession } from "next-auth";
 import { authOptions } from "@/app/api/auth/[...nextauth]/route";
 import { redirect } from "next/navigation";
+import { Toaster } from "@/components/ui/sonner";
 
 const epilogue = Epilogue({
   subsets: ["latin"],
@@ -30,6 +31,7 @@ export default async function RootLayout({
     <html lang="en">
       <body className={`${epilogue.className} antialiased`}>
         <main>{children}</main>
+        <Toaster />
       </body>
     </html>
   );
