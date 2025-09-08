@@ -1,48 +1,13 @@
 "use client";
 
 import ExploreDataContainer from "@/cointainers/ExploreDataContainer";
-import { CATEGORIES_OPTIONS } from "@/constants";
-import { formFilterCompanySchema, formFilterSchema } from "@/lib/form-schema";
-import { CompanyType, filterFormType, JobType } from "@/types";
+import useCategoryCompanyFilter from "@/hooks/useCategoryCompanyFilter";
+import useCompanies from "@/hooks/useCompanies";
+import { formFilterCompanySchema } from "@/lib/form-schema";
 import { zodResolver } from "@hookform/resolvers/zod";
-import React, { FC } from "react";
+import React, { FC, useEffect, useState } from "react";
 import { useForm } from "react-hook-form";
 import z from "zod";
-
-const FILTER_FORMS: filterFormType[] = [
-  {
-    name: "industry",
-    label: "Industry",
-    items: CATEGORIES_OPTIONS,
-  },
-];
-
-const dummyData: CompanyType[] = [
-  {
-    image: "/images/company2.png",
-    categories: "Marketing",
-    description:
-      "Lorem ipsum dolor sit amet consectetur adipisicing elit. Nulla asperiores ab sit nobis esse mollitia. Illo eos deserunt, dolorem architecto magni iusto repudiandae,",
-    name: "PT. Telkom",
-    totalJobs: 20,
-  },
-  {
-    image: "/images/company2.png",
-    categories: "Marketing",
-    description:
-      "Lorem ipsum dolor sit amet consectetur adipisicing elit. Nulla asperiores ab sit nobis esse mollitia. Illo eos deserunt, dolorem architecto magni iusto repudiandae,",
-    name: "PT. Telkom",
-    totalJobs: 20,
-  },
-  {
-    image: "/images/company2.png",
-    categories: "Marketing",
-    description:
-      "Lorem ipsum dolor sit amet consectetur adipisicing elit. Nulla asperiores ab sit nobis esse mollitia. Illo eos deserunt, dolorem architecto magni iusto repudiandae,",
-    name: "PT. Telkom",
-    totalJobs: 20,
-  },
-];
 
 interface FindCompaniesProps {}
 
@@ -54,22 +19,32 @@ const FindCompaniesPage: FC<FindCompaniesProps> = () => {
     },
   });
 
+  const { filters } = useCategoryCompanyFilter();
+
+  const [categories, setCategories] = useState<string[]>([]);
+
+  const { companies, isLoading, mutate } = useCompanies(categories);
+
   const onSubmitFormFilter = async (
     val: z.infer<typeof formFilterCompanySchema>
   ) => {
-    console.log(val);
+    setCategories(val.industry);
   };
+
+  useEffect(() => {
+    mutate();
+  }, [categories]);
   return (
     <>
       <ExploreDataContainer
         formFilter={formFilter}
         onSubmitFilter={onSubmitFormFilter}
-        filterForms={FILTER_FORMS}
-        loading={false}
+        filterForms={filters}
+        loading={isLoading}
         subtitle="Find the dream companies you dream work for"
         title="dream companies"
         type="company"
-        data={dummyData}
+        data={companies}
       />
     </>
   );

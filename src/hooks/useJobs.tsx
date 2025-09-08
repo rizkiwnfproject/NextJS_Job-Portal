@@ -3,8 +3,9 @@ import { JobType } from "@/types";
 import { useCallback, useEffect, useMemo, useState } from "react";
 import useSWR from "swr";
 
+const JOB_PATH = "/api/job/filter";
+
 const useJobs = (filter?: string[]) => {
-  const JOB_PATH = "/api/job/filter";
 
   const paramsCategory = useMemo(() => {
     if (filter && filter.length > 0) {

@@ -19,8 +19,9 @@ model CategoryJob {
 }
 
 model Industry {
-    id   String @id @default(cuid())
-    name String
+    id              String            @id @default(cuid())
+    name            String
+    CompanyOverview CompanyOverview[]
 }
 
 model Company {
@@ -57,18 +58,19 @@ model CompanyTeam {
 }
 
 model CompanyOverview {
-    id          String   @id @default(cuid())
+    id          String    @id @default(cuid())
     image       String
     website     String
     name        String
     location    String
     employee    String
     industry    String
+    Industry    Industry? @relation(fields: [industry], references: [id])
     dateFounded String
     techStack   String[]
     description String
     companyId   String?
-    Company     Company? @relation(fields: [companyId], references: [id])
+    Company     Company?  @relation(fields: [companyId], references: [id])
 }
 
 model Job {

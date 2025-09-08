@@ -3,7 +3,7 @@ import { twMerge } from "tailwind-merge";
 
 import bcrypt from "bcryptjs";
 import moment from "moment";
-import { categoryJobType, JobType, OptionType } from "@/types";
+import { categoryJobType, CompanyType, JobType, OptionType } from "@/types";
 import { supabaseGetPublicUrl } from "./supabase";
 
 export function cn(...inputs: ClassValue[]) {
@@ -95,10 +95,57 @@ export const parsingJobs = async (
   return [];
 };
 
-export const parsingCategoriesToOptions = (
+export const parsingCompanies = async (
   data: any,
   isLoading: boolean,
   error: any
+) => {
+  if (!isLoading && !error && data) {
+    return await Promise.all(
+      data.map(async (item: any) => {
+        let imageName = item.CompanyOverview[0]?.image;
+        let imageUrl;
+
+        if (imageName) {
+          // imageUrl = await supabaseGetPublicUrl(imageName, "company");
+          const { publicUrl } = await supabaseGetPublicUrl(
+            imageName,
+            "company"
+          );
+          imageUrl = publicUrl;
+        } else {
+          imageUrl = "/images/company2.png";
+        }
+
+        const companyDetail = item.CompanyOverview[0];
+
+        const company: CompanyType = {
+          id: item.id,
+          name: companyDetail?.name,
+          image: imageUrl,
+          dateFounded: companyDetail?.dateFounded,
+          description: companyDetail?.description,
+          employee: companyDetail?.employee,
+          industry: companyDetail?.Industry.name,
+          location: companyDetail?.location,
+          techStack: companyDetail?.techStack,
+          website: companyDetail?.website,
+          sosmed: item.CompanySocialMedia[0],
+          teams: item.CompanyTeam,
+          totalJobs: item._count.Job,
+        };
+        return company;
+      })
+    );
+  }
+  return [];
+};
+
+export const parsingCategoriesToOptions = (
+  data: any,
+  isLoading: boolean,
+  error: any,
+  isIndustry?: boolean
 ) => {
   if (!isLoading && !error && data) {
     return data.map((item: any) => {

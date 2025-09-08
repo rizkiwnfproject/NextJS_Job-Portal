@@ -10,7 +10,7 @@ import React, { FC } from "react";
 interface CompanyCardProps extends CompanyType {}
 
 const CompanyCard: FC<CompanyCardProps> = ({
-  categories,
+  industry,
   description,
   image,
   name,
@@ -29,12 +29,13 @@ const CompanyCard: FC<CompanyCardProps> = ({
         </div>
         <div className="my-4">
           <div className="text-lg font-semibold mb-2">{name}</div>
-          <div className="line-clamp-3 text-sm text-muted-foreground">
-            {description}
-          </div>
+          <div
+            className="line-clamp-3 text-sm text-muted-foreground"
+            dangerouslySetInnerHTML={{ __html: description }}
+          />
         </div>
         <div className="space-x-2">
-          <Badge variant={"outline"}>{categories}</Badge>
+          <Badge variant={"outline"}>{industry}</Badge>
         </div>
       </div>
     </>

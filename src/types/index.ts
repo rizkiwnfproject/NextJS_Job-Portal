@@ -29,10 +29,36 @@ export type filterFormType = {
   items: OptionType[];
 };
 
-export type CompanyType = {
-  image: string;
-  totalJobs: number;
+export type CompanyTeamType = {
+  id: string;
   name: string;
+  position: string;
+  instagram: string;
+  likedin: string;
+};
+
+export type CompanySocialMediaType = {
+  id: string;
+  instagram: string;
+  likedin: string;
+  twitter: string;
+  facebook: string;
+  youtube: string;
+};
+
+export type CompanyType = {
+  id: string;
+  image: string;
+  name: string;
+  totalJobs: number;
   description: string;
-  categories: string;
+  // categories: string;
+  website: string;
+  location: string;
+  industry: string;
+  employee: string;
+  dateFounded: string;
+  techStack: string[];
+  sosmed: CompanySocialMediaType;
+  teams: CompanyTeamType[];
 };
