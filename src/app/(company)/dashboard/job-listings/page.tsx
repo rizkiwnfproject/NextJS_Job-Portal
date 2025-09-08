@@ -9,7 +9,7 @@ import {
   TableHeader,
   TableRow,
 } from "@/components/ui/table";
-import { JOB_LISTING_COLUMNS, JOB_LISTING_DATA } from "@/constants";
+import { JOB_LISTING_COLUMNS } from "@/constants";
 import { Badge } from "@/components/ui/badge";
 import ButtonActionTable from "@/components/organisms/ButtonActionTable";
 import prisma from "../../../../../lib/prisma";
@@ -20,6 +20,8 @@ import { dateFormat } from "@/lib/utils";
 import moment from "moment";
 
 interface JobListingsProps {}
+
+export const revalidate = 0
 
 async function getDataJobs() {
   const session = await getServerSession(authOptions);

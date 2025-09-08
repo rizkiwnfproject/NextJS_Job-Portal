@@ -10,6 +10,8 @@ import { authOptions } from "@/app/api/auth/[...nextauth]/route";
 
 interface SettingsProps {}
 
+export const revalidate = 0
+
 async function getDetailCompany() {
   const session = await getServerSession(authOptions);
 
