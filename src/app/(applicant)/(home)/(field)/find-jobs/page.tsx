@@ -2,6 +2,7 @@
 
 import ExploreDataContainer from "@/cointainers/ExploreDataContainer";
 import { CATEGORIES_OPTIONS } from "@/constants";
+import useCategoryJobFilter from "@/hooks/useCategoryJobFilter";
 import { formFilterSchema } from "@/lib/form-schema";
 import { filterFormType, JobType } from "@/types";
 import { zodResolver } from "@hookform/resolvers/zod";
@@ -34,6 +35,9 @@ const dummyData: JobType[] = [
 ];
 
 const FindJobsPage: FC<FindJobsProps> = () => {
+  const {filters} = useCategoryJobFilter();
+
+
   const formFilter = useForm<z.infer<typeof formFilterSchema>>({
     resolver: zodResolver(formFilterSchema),
     defaultValues: {
@@ -49,7 +53,7 @@ const FindJobsPage: FC<FindJobsProps> = () => {
       <ExploreDataContainer
         formFilter={formFilter}
         onSubmitFilter={onSubmitFormFilter}
-        filterForms={FILTER_FORMS}
+        filterForms={filters}
         loading={false}
         subtitle="Find your next career at companies like HubSpot, Nike, and Dropbox"
         title="dream job"

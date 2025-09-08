@@ -79,7 +79,7 @@ const OverviewForm: FC<OverviewFormProps> = ({ detail }) => {
       let filename = "";
       if (typeof val.image === "object") {
         const uploadImg = await supabaseUploadFile(val.image, "company");
-        filename = uploadImg.filename;
+        filename = uploadImg.fileName;
       } else {
         filename = val.image;
       }
@@ -96,10 +96,15 @@ const OverviewForm: FC<OverviewFormProps> = ({ detail }) => {
         body: JSON.stringify(body),
       });
 
-      await toast("Success", { description: "Edit Profile", className: 'text-slate-700' });
+      await toast("Success", {
+        description: "Edit Profile",
+        className: "text-slate-700",
+      });
       router.refresh();
     } catch (error) {
-      await toast("Error", { description: "Error Edit Profile, please try again" });
+      await toast("Error", {
+        description: "Error Edit Profile, please try again",
+      });
       console.log(error);
     }
   };

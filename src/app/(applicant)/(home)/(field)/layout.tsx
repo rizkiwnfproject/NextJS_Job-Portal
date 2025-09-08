@@ -22,10 +22,10 @@ export default async function RootLayout({
 }: Readonly<{
   children: React.ReactNode;
 }>) {
-  const session = await getServerSession(authOptions);
-  if (session === null || session.user.role !== "USER") {
-    return redirect("/");
-  }
+  // const session = await getServerSession(authOptions);
+  // if (session === null || session.user.role !== "USER") {
+  //   return redirect("/");
+  // }
   return (
     <html lang="en">
       <body className={`${epilogue.className} antialiased`}>
