@@ -29,7 +29,7 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 import { Separator } from "@/components/ui/separator";
-import { EMPLOYEE_OPTIONS, LOCATION_OPTIONS, optionType } from "@/constants";
+import { EMPLOYEE_OPTIONS, LOCATION_OPTIONS } from "@/constants";
 import { overviewFormSchema } from "@/lib/form-schema";
 import { cn, dateFormat, fetcher } from "@/lib/utils";
 import { zodResolver } from "@hookform/resolvers/zod";
@@ -45,6 +45,7 @@ import { supabaseUpdateFile, supabaseUploadFile } from "@/lib/supabase";
 import { useSession } from "next-auth/react";
 import { toast } from "sonner";
 import { useRouter } from "next/navigation";
+import { OptionType } from "@/types";
 
 interface OverviewFormProps {
   detail: CompanyOverview | undefined;
@@ -187,7 +188,7 @@ const OverviewForm: FC<OverviewFormProps> = ({ detail }) => {
                         </FormControl>
                         <SelectContent>
                           {LOCATION_OPTIONS.map(
-                            (item: optionType, i: number) => (
+                            (item: OptionType, i: number) => (
                               <SelectItem key={item.id + i} value={item.id}>
                                 {item.label}
                               </SelectItem>
@@ -217,7 +218,7 @@ const OverviewForm: FC<OverviewFormProps> = ({ detail }) => {
                           </FormControl>
                           <SelectContent>
                             {EMPLOYEE_OPTIONS.map(
-                              (item: optionType, i: number) => (
+                              (item: OptionType, i: number) => (
                                 <SelectItem key={item.id + i} value={item.id}>
                                   {item.label}
                                 </SelectItem>

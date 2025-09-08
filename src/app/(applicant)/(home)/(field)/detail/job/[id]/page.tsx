@@ -231,15 +231,16 @@ const DetailJobPage = async ({ params }: { params: { id: string } }) => {
           </div>
         </div>
         <div className="grid grid-cols-4 gap-5">
-          {data?.benefits!.map((item: any) => (
-            <div key={item} className="">
-              <LayoutGrid className="w-12 h-12 text-primary" />
-              <div className="font-semibold text-xl mt-6">{item.benefit}</div>
-              <div className="mt-3 text-sm text-gray-500">
-                {item.description}
+          {Array.isArray(data?.benefits) &&
+            data?.benefits!.map((item: any) => (
+              <div key={item} className="">
+                <LayoutGrid className="w-12 h-12 text-primary" />
+                <div className="font-semibold text-xl mt-6">{item.benefit}</div>
+                <div className="mt-3 text-sm text-gray-500">
+                  {item.description}
+                </div>
               </div>
-            </div>
-          ))}
+            ))}
         </div>
       </div>
     </>

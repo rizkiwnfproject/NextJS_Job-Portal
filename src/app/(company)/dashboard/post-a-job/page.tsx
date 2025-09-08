@@ -47,7 +47,7 @@ const PostAJobPage: FC<PostAJobProps> = ({}) => {
   const [editorLoaded, setEditorLoaded] = useState<boolean>(false);
   const router = useRouter();
 
-  const { data, error, isLoading } = useSWR<CategoryJob>(
+  const { data, error, isLoading } = useSWR<CategoryJob[]>(
     `/api/job/categories`,
     fetcher
   );

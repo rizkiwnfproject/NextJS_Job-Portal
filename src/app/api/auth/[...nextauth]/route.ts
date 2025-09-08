@@ -82,7 +82,7 @@ export const authOptions: NextAuthOptions = {
     jwt({ token, account, user }) {
       if (account) {
         token.id = user.id;
-        token.email = user.email;
+        token.email = user.email!;
         token.role = user.role;
       }
       return token;
@@ -91,7 +91,7 @@ export const authOptions: NextAuthOptions = {
       if (session.user) {
         session.user.id = token.id;
         session.user.email = token.email;
-        session.user.role = token.role;
+        session.user.role = token.role as "ADMIN" | "USER";
       }
       return session;
     },
